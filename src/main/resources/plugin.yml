@@ -1,0 +1,10 @@
+name: Bedwars
+version: '1.0-SNAPSHOT'
+main: com.slopey.bedwars.Bedwars
+api-version: '1.21'
+commands:
+  createmap:
+    description: Starts the process of creating a new bedwars map.
+    usage: /createmap
+    permission: bedwars.create
+    permission-message: "You may not create a map."
