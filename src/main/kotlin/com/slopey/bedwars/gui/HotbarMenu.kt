@@ -23,6 +23,7 @@ class HotbarMenu(private val player: Player, private var selections: List<Select
     }
 
     private fun setHotbar() {
+        player.inventory.clear()
         selections.forEachIndexed { index, selection ->
             player.inventory.setItem(index, selection.itemStack)
         }

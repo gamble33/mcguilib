@@ -5,7 +5,7 @@ import com.slopey.bedwars.listeners.RightClickListener
 import org.bukkit.entity.Player
 import java.util.*
 
-class MenuStack(player: Player, plugin: Bedwars) {
+class MenuStack(private val player: Player, private val plugin: Bedwars) {
     val rightClickListener = RightClickListener()
     private val menuStack: Stack<HotbarMenu> = Stack()
 
@@ -18,6 +18,13 @@ class MenuStack(player: Player, plugin: Bedwars) {
     fun pop() {
         val menu = menuStack.pop();
         menu?.deactivate()
+
+        if (menuStack.isEmpty()) {
+            plugin.inventoryLocker.activePlayers.remove(player.uniqueId)
+            return;
+        } else {
+            menuStack.peek()?.activate()
+        }
     }
 
     fun push(menu: HotbarMenu) {

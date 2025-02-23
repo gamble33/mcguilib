@@ -4,6 +4,7 @@ import com.slopey.bedwars.Bedwars
 import com.slopey.bedwars.gui.HotbarMenu
 import com.slopey.bedwars.gui.MenuStack
 import com.slopey.bedwars.gui.Selection
+import com.slopey.bedwars.setup.TeamSetupWizard
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.command.Command
@@ -34,7 +35,7 @@ class CreateMapCommand(private val plugin: Bedwars) : CommandExecutor {
         val menuStack = MenuStack(player, plugin)
 
         val hotbarMenu = HotbarMenu(player, listOf(
-            Selection(teamItem) { p -> p.sendMessage("Starting map creation process!") },
+            Selection(teamItem) { p -> p.sendMessage("Starting map creation process!"); TeamSetupWizard(p, menuStack) },
             Selection(quitItem) { p -> p.sendMessage("Quit map creation process!"); menuStack.pop(); player.inventory.clear() }
         ), menuStack.rightClickListener)
 

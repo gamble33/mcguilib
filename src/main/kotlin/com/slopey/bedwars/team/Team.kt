@@ -1,0 +1,8 @@
+package com.slopey.bedwars.team
+
+import org.bukkit.Location
+
+class Team(private val teamColor: TeamColor, private val spawnPoint: Location) {
+    val name: String = teamColor.name
+    val players: MutableList<String> = mutableListOf()
+}
