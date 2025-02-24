@@ -12,25 +12,34 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class TeamSetupWizard(private val player: Player, menuStack: MenuStack) {
-    var spawnPoint: Location? = null
-    var teamColor: TeamColor? = null
+class TeamSetupWizard(
+    private val player: Player,
+    menuStack: MenuStack,
+    private val teams: List<Team>,
+    private val onCreateTeam: (Team) -> Unit
+) {
+    private var spawnPoint: Location? = null
+    private var teamColor: TeamColor? = null
 
     init {
         // Spawn point item
         val spawnPointItem = ItemStack(Material.CAMEL_SPAWN_EGG)
         var meta = spawnPointItem.itemMeta!!
-        meta.lore(listOf(
-            Component.text("This will set the team's spawn point where you are standing")
-        ))
+        meta.lore(
+            listOf(
+                Component.text("This will set the team's spawn point where you are standing")
+            )
+        )
         meta.displayName(Component.text("Set Spawn Point"))
         spawnPointItem.itemMeta = meta;
 
         val selectColorItem = ItemStack(Material.PINK_WOOL)
         meta = selectColorItem.itemMeta!!
-        meta.lore(listOf(
-            Component.text("Select to choose the color of your team (blocks, bed, etc.)")
-        ))
+        meta.lore(
+            listOf(
+                Component.text("Select to choose the color of your team (blocks, bed, etc.)")
+            )
+        )
         meta.displayName(Component.text("Select Team Color"))
         selectColorItem.itemMeta = meta;
 
@@ -42,21 +51,24 @@ class TeamSetupWizard(private val player: Player, menuStack: MenuStack) {
 
         val quitItem = ItemStack(Material.BARRIER);
         meta = quitItem.itemMeta!!
-        meta.lore(listOf(
-            Component.text("This will quit the team setup wizard")
-        ))
+        meta.lore(
+            listOf(
+                Component.text("This will quit the team setup wizard")
+            )
+        )
         meta.displayName(Component.text("Back"))
         quitItem.itemMeta = meta;
 
         val hotbarMenu = HotbarMenu(player, listOf(
-            Selection(spawnPointItem, { p ->
+            Selection(spawnPointItem, { p,_ ->
                 spawnPoint = p.location
-                p.sendMessage("Set spawn point!")}
+                p.sendMessage("Set spawn point!")
+            }
             ),
-            Selection(selectColorItem, { p ->
-                WoolSelectGUI(p, menuStack, ::onTeamColorSelected)
+            Selection(selectColorItem, { p,_ ->
+                WoolSelectGUI(p, menuStack, teams, ::onTeamColorSelected)
             }),
-            Selection(confirmItem, {p ->
+            Selection(confirmItem, { p,_ ->
                 if (isValid()) {
                     createTeam()
                     menuStack.pop()
@@ -65,8 +77,9 @@ class TeamSetupWizard(private val player: Player, menuStack: MenuStack) {
                     p.sendMessage("Unable to create team.")
                 }
             }),
-            Selection(quitItem, { p -> p.sendMessage("Exiting team creation"); menuStack.pop()})
-        ), menuStack.rightClickListener)
+            Selection(quitItem, { p,_ -> p.sendMessage("Exiting team creation"); menuStack.pop() })
+        ), menuStack.rightClickListener
+        )
 
         menuStack.push(hotbarMenu)
     }
@@ -79,7 +92,7 @@ class TeamSetupWizard(private val player: Player, menuStack: MenuStack) {
     private fun createTeam() {
         val team = Team(teamColor!!, spawnPoint!!)
         player.sendMessage("Created Team: ${team}")
-        // todo
+        onCreateTeam(team)
     }
 
     private fun isValid(): Boolean {

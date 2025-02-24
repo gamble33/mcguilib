@@ -1,6 +1,7 @@
 package com.slopey.bedwars.gui
 
 import com.slopey.bedwars.listeners.RightClickListener
+import org.bukkit.block.Block
 import org.bukkit.entity.Player
 
 class HotbarMenu(private val player: Player, private var selections: List<Selection>, private val rightClickListener: RightClickListener) {
@@ -18,8 +19,8 @@ class HotbarMenu(private val player: Player, private var selections: List<Select
         rightClickListener.activePlayers.remove(player.uniqueId)
     }
 
-    fun handleSelect(index: Int) {
-        selections[index].action(player)
+    fun handleSelect(index: Int, block: Block?) {
+        selections[index].action(player, block)
     }
 
     private fun setHotbar() {
