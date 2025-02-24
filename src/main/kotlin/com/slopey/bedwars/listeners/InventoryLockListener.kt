@@ -2,6 +2,7 @@ package com.slopey.bedwars.listeners
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -33,7 +34,12 @@ class InventoryLockListener : Listener {
     }
 
     @EventHandler
-    fun onPlaceBlocK(event: BlockPlaceEvent) {
+    fun onPlaceBlock(event: BlockPlaceEvent) {
+        if (activePlayers.contains(event.player.uniqueId)) event.isCancelled = true;
+    }
+
+    @EventHandler
+    fun onBreakBlock(event: BlockBreakEvent) {
         if (activePlayers.contains(event.player.uniqueId)) event.isCancelled = true;
     }
 }

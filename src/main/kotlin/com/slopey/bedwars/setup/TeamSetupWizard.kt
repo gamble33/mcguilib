@@ -11,6 +11,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.Tag
 
 class TeamSetupWizard(
     private val player: Player,
@@ -19,6 +20,7 @@ class TeamSetupWizard(
     private val onCreateTeam: (Team) -> Unit
 ) {
     private var spawnPoint: Location? = null
+    private var bedLocation: Location? = null
     private var teamColor: TeamColor? = null
 
     init {
@@ -42,6 +44,12 @@ class TeamSetupWizard(
         )
         meta.displayName(Component.text("Select Team Color"))
         selectColorItem.itemMeta = meta;
+
+        val setBedItem = UtilsGui.item(
+            Material.WHITE_BED,
+            "Set Bed Location",
+            "Right click on a bed to set it as the team's bed location"
+        )
 
         val confirmItem = UtilsGui.item(
             Material.GREEN_CONCRETE,
@@ -68,6 +76,12 @@ class TeamSetupWizard(
             Selection(selectColorItem, { p,_ ->
                 WoolSelectGUI(p, menuStack, teams, ::onTeamColorSelected)
             }),
+            Selection(setBedItem) { p, block ->
+                if (block == null || block.type in Tag.BEDS) {
+                    p.sendMessage("Right click on a bed to set it as the team's bed location.")
+                    return@Selection
+                }
+            },
             Selection(confirmItem, { p,_ ->
                 if (isValid()) {
                     createTeam()
