@@ -58,7 +58,7 @@ class CreateMapCommand(private val plugin: Bedwars) : CommandExecutor {
                 TeamSetupWizard(p, menuStack, teams, ::onCreateTeam)
             },
             Selection(islandItem) { p, _ ->
-                IslandSetupWizard(p, menuStack, ::onCreateGenerator)
+                IslandSetupWizard(p, menuStack, ::onCreateGenerator, ::onCreateShop)
             },
             Selection(quitItem) { p, _ ->
                 p.sendMessage("Quit map creation process!");
@@ -80,8 +80,10 @@ class CreateMapCommand(private val plugin: Bedwars) : CommandExecutor {
         return true
     }
 
-    private fun onCreateShop(shop: Shop) {
+    private fun onCreateShop(shop: Shop): Boolean {
+        if (shops.any { it.location.block == shop.location.block }) return false
         shops.add(shop)
+        return true
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
