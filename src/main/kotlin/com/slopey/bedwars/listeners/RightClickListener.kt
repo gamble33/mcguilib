@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -15,6 +16,7 @@ class RightClickListener : Listener {
     fun onPlayerRightClick(event: PlayerInteractEvent) {
         if (
             !activePlayers.contains(event.player.uniqueId) ||
+            event.hand != EquipmentSlot.HAND ||
             event.action != Action.RIGHT_CLICK_AIR &&
             event.action != Action.RIGHT_CLICK_BLOCK
         ) return;
