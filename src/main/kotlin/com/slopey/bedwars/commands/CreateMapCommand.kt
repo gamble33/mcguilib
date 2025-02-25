@@ -8,6 +8,7 @@ import com.slopey.bedwars.gui.Selection
 import com.slopey.bedwars.gui.UtilsGui
 import com.slopey.bedwars.setup.IslandSetupWizard
 import com.slopey.bedwars.setup.TeamSetupWizard
+import com.slopey.bedwars.persistence.BedwarsMap
 import com.slopey.bedwars.shop.Shop
 import com.slopey.bedwars.team.Team
 import net.kyori.adventure.text.Component
@@ -18,7 +19,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class CreateMapCommand(private val plugin: Bedwars) : CommandExecutor {
+class CreateMapCommand(private val plugin: Bedwars, onCreateMap: (BedwarsMap) -> Unit) : CommandExecutor {
     private val teams: MutableList<Team> = mutableListOf()
     private val generators: MutableList<Generator> = mutableListOf()
     private val shops: MutableList<Shop> = mutableListOf()
@@ -38,6 +39,13 @@ class CreateMapCommand(private val plugin: Bedwars) : CommandExecutor {
             Material.SAND,
             "Island Setup",
             "Setup generators, shops, etc."
+        )
+
+        val createMapItem = UtilsGui.item(
+            Material.GREEN_CONCRETE,
+            "Confirm & Save Map",
+            "Right click to create the map. This will exit the map creation process.",
+            "This may cause some lag as the server creates a copy of this world."
         )
 
         val quitItem = ItemStack(Material.BARRIER);
@@ -60,6 +68,13 @@ class CreateMapCommand(private val plugin: Bedwars) : CommandExecutor {
             Selection(islandItem) { p, _ ->
                 IslandSetupWizard(p, menuStack, ::onCreateGenerator, ::onCreateShop)
             },
+            Selection(createMapItem) { p, _ ->
+                if (!isMapValid()) {
+                    diagnoseMapValidity(player)
+                    return@Selection
+                }
+
+            }
             Selection(quitItem) { p, _ ->
                 p.sendMessage("Quit map creation process!");
                 menuStack.pop();
@@ -69,6 +84,14 @@ class CreateMapCommand(private val plugin: Bedwars) : CommandExecutor {
 
         menuStack.push(hotbarMenu)
     }
+
+    private fun diagnoseMapValidity(player: Player) {
+        if (teams.size <= 1) player.sendMessage("Create at least 2 teams.")
+        if (generators.size < 1) player.sendMessage("Create at least 1 generator.")
+        if (shops.size < 1) player.sendMessage("Create at least 1 shop.")
+    }
+
+    private fun isMapValid() = teams.size > 1 && generators.size > 1 && shops.size > 1
 
     private fun onCreateTeam(team: Team) {
         teams.add(team)

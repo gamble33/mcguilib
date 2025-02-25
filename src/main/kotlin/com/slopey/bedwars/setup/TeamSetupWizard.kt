@@ -68,21 +68,23 @@ class TeamSetupWizard(
         quitItem.itemMeta = meta;
 
         val hotbarMenu = HotbarMenu(player, listOf(
-            Selection(spawnPointItem, { p,_ ->
+            Selection(spawnPointItem, { p, _ ->
                 spawnPoint = p.location
                 p.sendMessage("Set spawn point!")
             }
             ),
-            Selection(selectColorItem, { p,_ ->
+            Selection(selectColorItem, { p, _ ->
                 WoolSelectGUI(p, menuStack, teams, ::onTeamColorSelected)
             }),
             Selection(setBedItem) { p, block ->
-                if (block == null || block.type in Tag.BEDS) {
+                if (block == null || !Tag.BEDS.isTagged(block.type)) {
                     p.sendMessage("Right click on a bed to set it as the team's bed location.")
                     return@Selection
                 }
+                bedLocation = block.location
+                p.sendMessage("Bed location set at ${bedLocation.toString()}!")
             },
-            Selection(confirmItem, { p,_ ->
+            Selection(confirmItem, { p, _ ->
                 if (isValid()) {
                     createTeam()
                     menuStack.pop()
@@ -91,7 +93,7 @@ class TeamSetupWizard(
                     p.sendMessage("Unable to create team.")
                 }
             }),
-            Selection(quitItem, { p,_ -> p.sendMessage("Exiting team creation"); menuStack.pop() })
+            Selection(quitItem, { p, _ -> p.sendMessage("Exiting team creation"); menuStack.pop() })
         ), menuStack.rightClickListener
         )
 
@@ -104,12 +106,15 @@ class TeamSetupWizard(
     }
 
     private fun createTeam() {
-        val team = Team(teamColor!!, spawnPoint!!)
+        val team = Team(teamColor!!, spawnPoint!!, bedLocation!!)
+        bedLocation!!.block.breakNaturally()
         player.sendMessage("Created Team: ${team}")
         onCreateTeam(team)
     }
 
     private fun isValid(): Boolean {
-        return spawnPoint != null && teamColor != null
+        return spawnPoint != null &&
+                teamColor != null &&
+                bedLocation != null
     }
 }
