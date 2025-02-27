@@ -1,7 +1,8 @@
 package com.slopey.bedwars
 
-import com.slopey.bedwars.commands.CreateMapCommand
+import com.slopey.bedwars.commands.*
 import com.slopey.bedwars.listeners.InventoryLockListener
+import com.slopey.bedwars.persistence.MapPersistence
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -15,13 +16,22 @@ import org.bukkit.scheduler.BukkitRunnable
 class Bedwars : JavaPlugin(), Listener {
 
     val inventoryLocker = InventoryLockListener();
+    val mapPersistence: MapPersistence = MapPersistence(this)
     private var generator: Location? = null;
 
     override fun onEnable() {
         logger.info("Bedwars enabled!")
 
-        getCommand("createmap")?.setExecutor(CreateMapCommand(this))
+        getCommand("createmap")?.setExecutor(CreateMapCmd(this))
             ?: logger.warning("Failed to register /createmap command")
+        getCommand("loadmap")?.setExecutor(LoadMapCmd(mapPersistence))
+            ?: logger.warning("Failed to register /loadmap command")
+        getCommand("loadworld")?.setExecutor(LoadWorldCmd(mapPersistence))
+            ?: logger.warning("Failed to register /loadworld command")
+        getCommand("listworlds")?.setExecutor(ListWorldsCmd())
+            ?: logger.warning("Failed to register /listworlds command")
+        getCommand("startgame")?.setExecutor(StartGameCmd())
+            ?: logger.warning("Failed to register /startgame command")
 
         server.pluginManager.registerEvents(this, this)
         server.pluginManager.registerEvents(inventoryLocker, this)

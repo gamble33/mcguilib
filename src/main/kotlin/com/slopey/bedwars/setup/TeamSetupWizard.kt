@@ -107,7 +107,7 @@ class TeamSetupWizard(
 
     private fun createTeam() {
         val team = Team(teamColor!!, spawnPoint!!, bedLocation!!)
-        bedLocation!!.block.breakNaturally()
+        bedLocation?.block?.type = Material.AIR
         player.sendMessage("Created Team: ${team}")
         onCreateTeam(team)
     }

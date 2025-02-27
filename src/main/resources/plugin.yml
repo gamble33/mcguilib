@@ -8,3 +8,23 @@ commands:
     usage: /createmap
     permission: bedwars.create
     permission-message: "You may not create a map."
+  loadmap:
+    description: Loads a map and sends all online players to it.
+    usage: /loadmap
+    permission: bedwars.loadmap
+    permission-message: "You may not load a map."
+  loadworld:
+    description: Loads a world and sends all online players to it.
+    usage: /loadworld
+    permission: bedwars.loadworld
+    permission-message: "You may not load a world."
+  listworlds:
+    description: List all worlds.
+    usage: /listworlds
+    permission: bedwars.listworlds
+    permission-message: "You may not list existing worlds."
+  startgame:
+    description: Start a bedwars game.
+    usage: /startgame
+    permission: bedwars.startgame
+    permission-message: "You may not start a game."

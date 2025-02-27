@@ -1,16 +1,19 @@
 package com.slopey.bedwars.gui
 
 import com.slopey.bedwars.Bedwars
+import com.slopey.bedwars.listeners.ChatListener
 import com.slopey.bedwars.listeners.RightClickListener
 import org.bukkit.entity.Player
 import java.util.*
 
 class MenuStack(private val player: Player, private val plugin: Bedwars) {
     val rightClickListener = RightClickListener()
-    private val menuStack: Stack<HotbarMenu> = Stack()
+    val chatListener = ChatListener()
+    private val menuStack: Stack<Menu> = Stack()
 
     init {
         plugin.server.pluginManager.registerEvents(rightClickListener, plugin)
+        plugin.server.pluginManager.registerEvents(chatListener, plugin)
         player.inventory.clear()
         plugin.inventoryLocker.activePlayers.add(player.uniqueId)
     }
@@ -27,7 +30,7 @@ class MenuStack(private val player: Player, private val plugin: Bedwars) {
         }
     }
 
-    fun push(menu: HotbarMenu) {
+    fun push(menu: Menu) {
         menuStack.push(menu)
         menu.activate()
     }

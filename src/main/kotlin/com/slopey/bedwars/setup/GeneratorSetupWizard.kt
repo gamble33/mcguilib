@@ -57,7 +57,7 @@ class GeneratorSetupWizard(player: Player, menuStack: MenuStack, private val onC
             if (block == null || block.type != generatorKind.getBlockType()) {
                 player.sendMessage("Click on an ${generatorKind.name} block to set it as a generator.")
             } else {
-                if (onCreateGenerator(Generator(generatorKind, block)))
+                if (onCreateGenerator(Generator(generatorKind, block.location)))
                     player.sendMessage("Created ${generatorKind.name} generator!")
                 else
                     player.sendMessage("Generator already exists here.")
